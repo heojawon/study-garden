@@ -1,20 +1,75 @@
-# 스터디 가든
+# Study Garden
 
-공부 시간을 기록하고 목표 달성을 돕는 학습 타이머 앱입니다. 과목별 시간 기록, 뽀모도로, 학습 통계와 정원 테마를 제공합니다.
+Study Garden is a study-time tracking app for learners. It combines subject-based
+sessions, focus timers, goals, study history, statistics, and customizable garden
+themes. The web and mobile apps are developed as separate clients and use Firebase
+for account identity and cross-device data.
 
-## 프로젝트 상태
+## Web app
 
-현재 기획과 UI 디자인을 정리하고 웹 앱을 먼저 개발할 예정입니다. 웹과 모바일 앱은 TypeScript 기반으로 각각 구성하고, 공통 도메인 로직은 재사용하는 방향을 검토하고 있습니다.
+### Requirements
 
-## 기획 및 디자인
+- Node.js 20 or later
+- npm
+- Firebase CLI for emulator and deployment commands
 
-기획서와 Stitch UI 원본 파일은 로컬에서 관리하며 GitHub에는 업로드하지 않습니다.
+### Run locally
 
-## 기술 방향
+```bash
+npm install
+npm run dev
+```
 
-- 웹: TypeScript
-- 모바일: TypeScript 기반 앱
-- 웹 UI 참고 자료: [React Bits](https://reactbits.dev/)
-- 백엔드 및 동기화: Firebase 도입 검토 중
+Copy `.env.example` to `.env.local` and add the Firebase web app configuration
+before testing cloud authentication and Firestore. Without these values, the app
+uses browser-local storage; local-only data does not sync to another device.
+Do not commit `.env.local` or service-account credentials.
 
-구체적인 구현 범위와 기술 선택은 개발 과정에서 확정합니다.
+### Firebase project
+
+The Firebase project is `study-garden-web-2026`; `.firebaserc` selects it as the
+default project for Firebase CLI commands. Its web app is registered, and the
+Firestore database is provisioned in `asia-northeast3` (Seoul) with the rules in
+`firestore.rules`.
+
+In the Firebase console, enable **Anonymous** and **Email/Password** sign-in under
+Authentication. Add the Firebase web app configuration to `.env.local` using the
+variable names in `.env.example`. Deploy rule changes with:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Firebase web configuration is client-side configuration, not a service-account
+credential. Never put private keys or service-account JSON in the web app.
+
+### Firebase emulators
+
+Start the local Auth and Firestore emulators:
+
+```bash
+npm run emulators
+```
+
+Set `VITE_USE_FIREBASE_EMULATOR=true` in `.env.local` and start the Vite server in
+a second terminal. Firestore rules tests run with:
+
+```bash
+npm run test:rules
+```
+
+### Checks
+
+```bash
+npm test
+npm run typecheck
+npm run build
+```
+
+## Data and privacy
+
+The app stores study records under the authenticated user's Firestore path.
+Firestore offline persistence is enabled in the web client. Local timer recovery
+state remains on the device and is not uploaded. Firestore security rules restrict
+records to their owner. Account linking preserves the anonymous account, and
+account deletion removes the user's stored data.
