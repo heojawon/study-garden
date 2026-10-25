@@ -1,0 +1,30 @@
+# Local agent tooling in this workspace
+.github/agents/
+.github/ecc/
+.github/skills/
+.github/ecc-install-state.json
+.playwright-mcp/
+
+# Private product planning and design source files
+/docs/PRD.md
+/designs/
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.next/
+coverage/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+firebase-debug.log
+firestore-debug.log
+*-service-account*.json
+serviceAccountKey.json
+
+# Operating system files
+.DS_Store
+Thumbs.db
